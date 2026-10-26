@@ -10,8 +10,9 @@ class MainViewController: CAPBridgeViewController {
     }
 
     // Huckline plays in landscape only
+    // (Capacitor's controller keeps prefersHomeIndicatorAutoHidden non-open: edge gestures are
+    // deferred instead, so a swipe from the bottom edge needs a second swipe mid-run)
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .landscape }
-    override var prefersHomeIndicatorAutoHidden: Bool { true }
     override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge { .all }
 }
 
