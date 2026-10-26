@@ -102,6 +102,7 @@ export const TARGETS = {
   iphone: { w: 956, h: 440, dpr: 3, dir: 'appstore/iphone-6.9' }, // 2868 × 1320
   iphone65: { w: 896, h: 414, dpr: 3, dir: 'appstore/iphone-6.5' }, // 2688 × 1242
   ipad: { w: 1376, h: 1032, dpr: 2, dir: 'appstore/ipad-13' }, // 2752 × 2064
+  duo: { w: 951, h: 669, dpr: 3, dir: 'appstore/iphone-duo' }, // 2853 × 2007 (iPhone Duo inner screen, landscape)
   play: { w: 960, h: 540, dpr: 2, dir: 'play/phone' }, // 1920 × 1080
   tablet: { w: 1280, h: 720, dpr: 2, dir: 'play/tablet' }, // 2560 × 1440
 };
@@ -161,5 +162,7 @@ export const final = (pick = {}) => {
     { out: 'icon/adaptive-bg-1024.png', from: 'adaptive-plate', w: 1024, h: 1024, opaque: true },
   ];
   const mattes = [{ out: 'icon/adaptive-fg-1024.png', black: 'adaptive-black', white: 'adaptive-white', w: 1024, h: 1024 }];
+  // launch screen: the wordmark on the brand ink (iOS storyboard image, Android < 12 splash)
+  compose.push({ out: 'splash/splash-2732.png', bg: 'splash', w: 2732, h: 2732, splash: true });
   return { renders, compose, images, mattes, contact: true };
 };

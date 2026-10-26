@@ -139,6 +139,16 @@ html, body { margin: 0; width: ${s.w}px; height: ${s.h}px; overflow: hidden; bac
 .label { display: inline-block; font-family: 'SAI'; font-weight: 800; font-stretch: 88%; letter-spacing: .16em; text-transform: uppercase; color: #0b0c0f; background: #ff5b14; font-size: ${Math.round(30 * k)}px; padding: ${Math.round(7 * k)}px ${Math.round(18 * k)}px ${Math.round(6 * k)}px; clip-path: polygon(${Math.round(10 * k)}px 0, 100% 0, calc(100% - ${Math.round(10 * k)}px) 100%, 0 100%); }
 .title { font-family: 'BSD'; font-weight: 900; text-transform: uppercase; color: #f4eee3; line-height: .84; transform: skewX(-8deg); text-shadow: 0 ${Math.round(6 * k)}px ${Math.round(34 * k)}px rgba(0,0,0,.5); }
 .logo b, .flogo b { color: #ff5b14; }`;
+    // splash: the wordmark centred on the brand ink (no game frame)
+    if (s.splash) {
+      const u = s.w / 2732;
+      return `<!doctype html><html><head><meta charset="utf-8"><style>${fonts}
+body { background: radial-gradient(60% 45% at 50% 55%, #1a120d 0%, #0b0c0f 70%); }
+.mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) skewX(-9deg); font-family: 'BSD'; font-weight: 900; font-size: ${Math.round(250 * u)}px; letter-spacing: .01em; color: #f4eee3; white-space: nowrap; }
+.mark b { color: #ff5b14; }
+.arc { position: absolute; left: 50%; top: 50%; width: ${Math.round(760 * u)}px; height: ${Math.round(200 * u)}px; transform: translate(-46%, -112%); border-top: ${Math.round(9 * u)}px dashed #ff5b14; border-radius: 50% 50% 0 0 / 100% 100% 0 0; opacity: .9; }
+</style></head><body><div class="arc"></div><div class="mark">HUCK<b>LINE</b></div></body></html>`;
+    }
     // UI screens: the screen framed on the brand background, the caption above it
     if (s.bare) {
       const ih = Math.round(s.h * 0.72);
@@ -170,7 +180,7 @@ ${s.logo === true ? '<div class="logo">HUCK<b>LINE</b></div>' : ''}
   const page = await browser.newPage();
   for (const s of plan.compose ?? []) {
     if (!want(s.bg)) continue;
-    if (!existsSync(`${OUT}/raw/${s.bg}.png`)) {
+    if (!s.splash && !existsSync(`${OUT}/raw/${s.bg}.png`)) {
       console.log(`skip ${s.out}: no raw ${s.bg}`);
       continue;
     }
@@ -194,7 +204,7 @@ ${s.logo === true ? '<div class="logo">HUCK<b>LINE</b></div>' : ''}
     const rawNames = (plan.renders ?? []).map((r) => r.name).filter((n) => existsSync(`${OUT}/raw/${n}.png`));
     const items =
       mode === 'final'
-        ? made.filter((f) => /iphone-6\.9|feature|icon|header|search/.test(f)).map((f) => ({ src: `/__out/${f}`, name: f }))
+        ? made.filter((f) => /iphone-6\.9|iphone-duo|feature|icon|header|search|splash/.test(f)).map((f) => ({ src: `/__out/${f}`, name: f }))
         : [...rawNames.map((n) => ({ src: `/__out/raw/${n}.png`, name: n })), ...made.map((f) => ({ src: `/__out/${f}`, name: f }))];
     const sheet = `<!doctype html><html><head><meta charset="utf-8"><style>
 body { margin: 0; padding: 12px; background: #15161a; color: #ddd; font: 600 15px system-ui, sans-serif; width: 1976px; }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Google Play Games Services project (Play Console → Play Games Services → Configuration).
-     Achievement and leaderboard ids live in src/game/service-ids.ts. -->
+<!-- Google Play Games Services project "Huckline" (Play Console → Play Games Services → Configuration,
+     Google Cloud project "huckline"). Achievement and leaderboard ids live in src/game/service-ids.ts. -->
 <resources>
-    <string name="game_services_project_id" translatable="false">0</string>
+    <string name="game_services_project_id" translatable="false">626102531599</string>
 </resources>
