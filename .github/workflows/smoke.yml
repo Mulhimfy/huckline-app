@@ -1,0 +1,57 @@
+name: Emulator smoke test
+
+# Installs a debug build on an Android emulator, opens the game, starts a line, rides with a few
+# gestures, takes screenshots and fails on native crashes or uncaught JavaScript errors.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore: ['docs/**', 'README.md']
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci && npx cap sync android
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --console=plain -q
+          cp app/build/outputs/apk/debug/app-debug.apk ../smoke.apk
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          ram-size: 4096M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash .github/smoke/run.sh
+      - name: Screenshots only (no builds)
+        if: always()
+        run: rm -f smoke-out/*.apk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-screens
+          path: |
+            smoke-out/*.png
+            smoke-out/logcat.txt

@@ -1,0 +1,35 @@
+{
+  "appId": "com.mulhimfy.huckline",
+  "appName": "Huckline",
+  "webDir": "dist",
+  "backgroundColor": "#0b0c0f",
+  "android": {
+    "backgroundColor": "#0b0c0f",
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "ios": {
+    "backgroundColor": "#0b0c0f",
+    "contentInset": "never",
+    "scrollEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "launchAutoHide": false,
+      "backgroundColor": "#0b0c0f",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP"
+    },
+    "SystemBars": {
+      "insetsHandling": "css",
+      "style": "DARK",
+      "hidden": true
+    },
+    "StatusBar": {
+      "overlaysWebView": true,
+      "style": "DARK",
+      "backgroundColor": "#00000000"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Huckline</string>
+    <string name="title_activity_main">Huckline</string>
+    <string name="package_name">com.mulhimfy.huckline</string>
+    <string name="custom_url_scheme">com.mulhimfy.huckline</string>
+</resources>
