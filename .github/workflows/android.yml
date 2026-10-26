@@ -1,14 +1,16 @@
 name: Android
 
 # Builds the signed release APK (sideload / GitHub release) and AAB (Google Play).
-# Push to main = test build. Push a tag v* = GitHub release with the APK.
+# Started by hand only (scripts/publish-app.sh dispatches it): no input = test build,
+# release=v1.2.3 = also a GitHub release of that tag with the APK.
 # Builds are never uploaded in the clear: the artifact is encrypted with HL_ARTIFACT_KEY.
 on:
-  push:
-    branches: [main]
-    tags: ['v*']
-    paths-ignore: ['docs/**', 'README.md']
   workflow_dispatch:
+    inputs:
+      release:
+        description: Release tag to publish with the APK (e.g. v1.0.0); empty = test build only
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -81,11 +83,13 @@ jobs:
           path: enc/
           if-no-files-found: error
           retention-days: 14
-      - name: Publish release (tags only)
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Publish release
+        if: inputs.release != ''
         env:
           GH_TOKEN: ${{ github.token }}
+          REL: ${{ inputs.release }}
         run: |
-          gh release create "$GITHUB_REF_NAME" Huckline.apk \
-            --title "Huckline ${GITHUB_REF_NAME}" \
-            --notes-file RELEASE_NOTES.md --latest
+          [[ "$REL" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::release must look like v1.2.3"; exit 1; }
+          gh release delete "$REL" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$REL" Huckline.apk --target "$GITHUB_SHA" \
+            --title "Huckline $REL" --notes-file RELEASE_NOTES.md --latest

@@ -1,0 +1,74 @@
+name: Store art
+
+# Renders the store screenshots, feature graphic and icons from the built game (dist/) with headless
+# Chrome, so the heavy rendering never runs on the small build server. Started by hand only.
+# The artifact holds images only (no builds, no source).
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: preview (candidate shots + contact sheet) or final (every store size)
+        type: choice
+        options: [preview, final]
+        default: preview
+      only:
+        description: Comma-separated raw frame names to render (empty = all)
+        required: false
+        default: ''
+      pick:
+        description: 'final: JSON choices, e.g. {"icon":"iconB","feature":"featA"}'
+        required: false
+        default: '{}'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: art
+  cancel-in-progress: true
+
+jobs:
+  art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tools (puppeteer-core + sharp, next to the script)
+        working-directory: art
+        run: |
+          npm init -y > /dev/null
+          npm i --no-audit --no-fund puppeteer-core@24 sharp@0.34
+          google-chrome --version
+      - name: Render
+        env:
+          MODE: ${{ inputs.mode }}
+          ONLY: ${{ inputs.only }}
+          PICK: ${{ inputs.pick }}
+          CHROME: /usr/bin/google-chrome
+        run: |
+          set -o pipefail
+          case "$MODE" in preview|final) ;; *) echo "bad mode"; exit 1 ;; esac
+          node art/render.mjs "$MODE" art-out 2>&1 | tee art-out.log
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.mode == 'preview'
+        with:
+          name: store-art-preview
+          path: |
+            art-out/
+            art-out.log
+          retention-days: 7
+      # final: only the finished store files (the raw frames are large and not needed)
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.mode == 'final'
+        with:
+          name: store-art-final
+          path: |
+            art-out/
+            !art-out/raw/
+            art-out.log
+          retention-days: 7

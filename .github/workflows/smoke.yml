@@ -4,9 +4,6 @@ name: Emulator smoke test
 # gestures, takes screenshots and fails on native crashes or uncaught JavaScript errors.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths-ignore: ['docs/**', 'README.md']
 
 jobs:
   smoke:
