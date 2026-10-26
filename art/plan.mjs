@@ -34,7 +34,7 @@ export const SCENES = {
   treeDeck: { line: 'pines-2', ff: 410, air: 0.6, pose: 'nohander', cam: [110, 4, 5, 0.3, 80, 0, 1.5] },
   oldGrowth: { line: 'pines-5', ff: 588, air: 0.6, pose: 'superman', cam: [80, -4, 5, 0.4, 80, 0, 1.5] },
   // gameplay frames with the HUD (chase camera)
-  hudFlip: { line: 'mesa-2', ff: 312, air: 0.45, pose: 'none', pitch: -110, hud: true, cam: [180, 14, 5.5, 0, 96] },
+  hudFlip: { line: 'mesa-2', ff: 312, air: 0.45, pose: 'superman', hud: true, cam: [150, 10, 4.8, 0.1, 96] },
   hudLava: { line: 'ember-5', ff: 402, air: 0.5, pose: 'superman', hud: true, cam: [175, 12, 5.5, 0, 96] },
   // icon: close and low, the rider against the sky
   iconA: { line: 'mesa-4', ff: 470, air: 0.65, pose: 'superman', cam: [35, -12, 3.4, 0.3, 42] },
@@ -44,7 +44,7 @@ export const SCENES = {
   iconH: { line: 'ember-5', ff: 260, air: 0.6, pose: 'superman', cam: [30, -8, 4.2, 0.3, 44] },
   // Play feature graphic (logo on the left, rider right)
   featC: { line: 'mesa-4', ff: 498, air: 0.6, pose: 'nohander', cam: [100, 4, 6, 0.3, 64, 0, 2.0] },
-  featD: { line: 'mesa-5', ff: 458, air: 0.8, pose: 'superman', cam: [-140, 10, 6.5, 0.2, 66, 0, 2.2] },
+  featD: { line: 'mesa-5', ff: 458, air: 0.8, pose: 'superman', cam: [-140, 10, 5.4, 0.2, 66, 0, 1.9] },
   featE: { line: 'ember-5', ff: 260, air: 0.6, pose: 'superman', cam: [110, 5, 6, 0.2, 64, 0, 2.0] },
   // App Store header (21:9, app name sits over the lower part: rider centred, a little high)
   headA: { line: 'mesa-5', ff: 458, air: 0.8, pose: 'superman', cam: [-140, 8, 6.5, -0.4, 74] },
@@ -114,11 +114,11 @@ export const SHOTS = [
   { id: '01-cliff', scene: 'bigSend', label: 'Big-mountain freeride', title: 'Huck<br>cliff drops', logo: true },
   { id: '02-tricks', scene: 'hudFlip', label: 'Flips · whips · spins', title: 'Land big<br>bike tricks', valign: 'bottom' },
   { id: '03-lava', scene: 'lava', label: 'Five wild worlds', title: 'Jump the<br>lava canyon' },
-  { id: '04-town', scene: 'alley', label: 'MTB & BMX stunts', title: 'Gap the<br>old town' },
-  { id: '05-pines', scene: 'treeDeck', label: '25 hand-built lines', title: 'Drop off<br>tree decks' },
-  { id: '06-snow', scene: 'cornice', label: 'Downhill', title: 'Send it<br>in the snow' },
-  { id: '07-bikes', ui: 'uiGarage', label: 'Five bikes', title: 'BMX to<br>downhill', align: 'right', bare: true },
-  { id: '08-lines', ui: 'uiLines', label: 'New line every day', title: 'Daily line<br>& endless', align: 'right', bare: true },
+  { id: '04-town', scene: 'roof', label: 'MTB & BMX stunts', title: 'Drop off<br>rooftops' },
+  { id: '05-pines', scene: 'treeDeck', label: '25 hand-built lines', title: 'Send the<br>tree decks' },
+  { id: '06-snow', scene: 'glacierGap', label: 'Downhill', title: 'Whip it<br>in the snow' },
+  { id: '07-bikes', ui: 'uiGarage', label: 'Five bikes', title: 'BMX to<br>downhill', bare: true },
+  { id: '08-lines', ui: 'uiLines', label: 'New line every day', title: 'Daily line<br>& endless', bare: true },
 ];
 
 export const final = (pick = {}) => {
@@ -135,11 +135,11 @@ export const final = (pick = {}) => {
     }
   }
   // Google Play feature graphic (1024 × 500), rendered at 2× and scaled down
-  const feat = scenes[pick.feature ?? 'featC'];
+  const feat = scenes[pick.feature ?? 'featD'];
   renders.push({ name: 'feature', query: sceneQuery(feat, 1024 / 500, '&dpr=2&shadow=4096'), w: 1024, h: 500, dpr: 2 });
   compose.push({ out: 'play/feature-graphic.jpg', bg: 'feature', w: 1024, h: 500, logo: 'big', tagline: 'Big-mountain freeride' });
   // App Store header (21:9, 3840 × 1646: no text, the store lays the app name over it)
-  const head = scenes[pick.header ?? 'headA'];
+  const head = scenes[pick.header ?? 'headB'];
   renders.push({ name: 'header', query: sceneQuery(head, 1920 / 823, '&dpr=2&shadow=4096'), w: 1920, h: 823, dpr: 2 });
   compose.push({ out: 'appstore/header-3840x1646.jpg', bg: 'header', w: 3840, h: 1646 });
   // App Store search results card (3:2, 3840 × 2560) with a short phrase

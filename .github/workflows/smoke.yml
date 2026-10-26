@@ -8,7 +8,11 @@ on:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        gpu: [swiftshader_indirect, guest]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -40,7 +44,7 @@ jobs:
           arch: x86_64
           ram-size: 4096M
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          emulator-options: -no-window -gpu ${{ matrix.gpu }} -noaudio -no-boot-anim -no-snapshot
           script: bash .github/smoke/run.sh
       - name: Screenshots only (no builds)
         if: always()
@@ -48,7 +52,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: smoke-screens
+          name: smoke-screens-${{ matrix.gpu }}
           path: |
             smoke-out/*.png
             smoke-out/logcat.txt
