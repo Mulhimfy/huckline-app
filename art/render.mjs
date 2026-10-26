@@ -131,25 +131,38 @@ try {
   const html = (s) => {
     const k = s.h / 1080;
     const left = s.align !== 'right';
+    const bottom = s.valign === 'bottom';
     const big = s.logo === 'big';
-    return `<!doctype html><html><head><meta charset="utf-8"><style>
-@font-face { font-family: 'BSD'; src: url('/__fonts/big-shoulders-display-latin-wght-normal.woff2') format('woff2'); font-weight: 100 900; }
+    const fonts = `@font-face { font-family: 'BSD'; src: url('/__fonts/big-shoulders-display-latin-wght-normal.woff2') format('woff2'); font-weight: 100 900; }
 @font-face { font-family: 'SAI'; src: url('/__fonts/saira-latin-wdth-normal.woff2') format('woff2'); font-weight: 100 900; font-stretch: 50% 125%; }
 html, body { margin: 0; width: ${s.w}px; height: ${s.h}px; overflow: hidden; background: #0b0c0f; }
+.label { display: inline-block; font-family: 'SAI'; font-weight: 800; font-stretch: 88%; letter-spacing: .16em; text-transform: uppercase; color: #0b0c0f; background: #ff5b14; font-size: ${Math.round(30 * k)}px; padding: ${Math.round(7 * k)}px ${Math.round(18 * k)}px ${Math.round(6 * k)}px; clip-path: polygon(${Math.round(10 * k)}px 0, 100% 0, calc(100% - ${Math.round(10 * k)}px) 100%, 0 100%); }
+.title { font-family: 'BSD'; font-weight: 900; text-transform: uppercase; color: #f4eee3; line-height: .84; transform: skewX(-8deg); text-shadow: 0 ${Math.round(6 * k)}px ${Math.round(34 * k)}px rgba(0,0,0,.5); }
+.logo b, .flogo b { color: #ff5b14; }`;
+    // UI screens: the screen framed on the brand background, the caption above it
+    if (s.bare) {
+      const ih = Math.round(s.h * 0.72);
+      const iw = Math.round(ih * (s.w / s.h));
+      return `<!doctype html><html><head><meta charset="utf-8"><style>${fonts}
+body { background: radial-gradient(120% 90% at 50% 110%, #3a1a0c 0%, #14100f 45%, #0b0c0f 75%); }
+.row { position: absolute; left: 0; right: 0; top: ${Math.round(s.h * 0.055)}px; display: flex; align-items: center; justify-content: center; gap: ${Math.round(34 * k)}px; }
+.row .title { font-size: ${Math.round(124 * k)}px; }
+.shot { position: absolute; left: 50%; bottom: ${Math.round(s.h * 0.05)}px; width: ${iw}px; height: ${ih}px; transform: translateX(-50%); border-radius: ${Math.round(34 * k)}px; overflow: hidden; box-shadow: 0 ${Math.round(30 * k)}px ${Math.round(90 * k)}px rgba(0,0,0,.6), 0 0 0 ${Math.max(2, Math.round(5 * k))}px #24262c; background: url('/__out/raw/${s.bg}.png') center / cover no-repeat; }
+</style></head><body><div class="row"><div class="label">${s.label}</div><div class="title">${s.title.replace(/<br>/g, ' ')}</div></div><div class="shot"></div></body></html>`;
+    }
+    return `<!doctype html><html><head><meta charset="utf-8"><style>${fonts}
 .bg { position: absolute; inset: 0; background: url('/__out/raw/${s.bg}.png') center / cover no-repeat; }
 .scrim { position: absolute; inset: 0; background: linear-gradient(${left ? '100deg' : '260deg'}, rgba(8,9,12,.78) 0%, rgba(8,9,12,.45) 30%, rgba(8,9,12,0) 54%); }
-.scrim.top { background: linear-gradient(180deg, rgba(8,9,12,.55) 0%, rgba(8,9,12,0) 42%); }
-.cap { position: absolute; ${left ? 'left' : 'right'}: ${Math.round(80 * k)}px; top: ${Math.round(78 * k)}px; max-width: ${Math.round(s.w * 0.5)}px; text-align: ${left ? 'left' : 'right'}; }
-.label { display: inline-block; font-family: 'SAI'; font-weight: 800; font-stretch: 88%; letter-spacing: .16em; text-transform: uppercase; color: #0b0c0f; background: #ff5b14; font-size: ${Math.round(30 * k)}px; padding: ${Math.round(7 * k)}px ${Math.round(18 * k)}px ${Math.round(6 * k)}px; clip-path: polygon(${Math.round(10 * k)}px 0, 100% 0, calc(100% - ${Math.round(10 * k)}px) 100%, 0 100%); }
-.title { font-family: 'BSD'; font-weight: 900; text-transform: uppercase; color: #f4eee3; font-size: ${Math.round((s.size ?? 150) * k)}px; line-height: .84; margin-top: ${Math.round(18 * k)}px; transform: skewX(-8deg); transform-origin: ${left ? 'left' : 'right'} bottom; text-shadow: 0 ${Math.round(6 * k)}px ${Math.round(34 * k)}px rgba(0,0,0,.5); }
+.scrim.bottom { background: linear-gradient(0deg, rgba(8,9,12,.8) 0%, rgba(8,9,12,.4) 26%, rgba(8,9,12,0) 46%); }
+.cap { position: absolute; ${left ? 'left' : 'right'}: ${Math.round(80 * k)}px; ${bottom ? `bottom: ${Math.round(70 * k)}px` : `top: ${Math.round(78 * k)}px`}; max-width: ${Math.round(s.w * 0.56)}px; text-align: ${left ? 'left' : 'right'}; }
+.cap .title { font-size: ${Math.round((s.size ?? 150) * k)}px; margin-top: ${Math.round(18 * k)}px; transform-origin: ${left ? 'left' : 'right'} bottom; }
 .logo { position: absolute; ${left ? 'right' : 'left'}: ${Math.round(70 * k)}px; bottom: ${Math.round(56 * k)}px; font-family: 'BSD'; font-weight: 900; font-size: ${Math.round(84 * k)}px; color: #f4eee3; transform: skewX(-9deg); text-shadow: 0 4px 24px rgba(0,0,0,.45); letter-spacing: .01em; }
-.logo b, .flogo b { color: #ff5b14; }
 .flogo { position: absolute; left: ${Math.round(s.w * 0.055)}px; top: 50%; transform: translateY(-50%) skewX(-9deg); font-family: 'BSD'; font-weight: 900; font-size: ${Math.round(s.h * 0.27)}px; line-height: .9; color: #f4eee3; text-shadow: 0 6px 30px rgba(0,0,0,.45); }
 .flogo small { display: block; font-family: 'SAI'; font-weight: 800; font-stretch: 88%; font-size: ${Math.round(s.h * 0.055)}px; letter-spacing: .2em; text-transform: uppercase; color: #ff5b14; margin-top: ${Math.round(s.h * 0.03)}px; transform: skewX(9deg); }
 .fscrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,9,12,.72) 0%, rgba(8,9,12,.35) 34%, rgba(8,9,12,0) 58%); }
 </style></head><body><div class="bg"></div>
 ${big ? `<div class="fscrim"></div><div class="flogo">HUCK<b>LINE</b>${s.tagline ? `<small>${s.tagline}</small>` : ''}</div>` : ''}
-${s.title ? '<div class="scrim"></div>' : ''}
+${s.title ? `<div class="scrim${bottom ? ' bottom' : ''}"></div>` : ''}
 ${s.title ? `<div class="cap">${s.label ? `<div class="label">${s.label}</div>` : ''}<div class="title">${s.title}</div></div>` : ''}
 ${s.logo === true ? '<div class="logo">HUCK<b>LINE</b></div>' : ''}
 </body></html>`;
@@ -179,7 +192,10 @@ ${s.logo === true ? '<div class="logo">HUCK<b>LINE</b></div>' : ''}
   // ---------------------------------------------------------------- contact sheet
   if (plan.contact) {
     const rawNames = (plan.renders ?? []).map((r) => r.name).filter((n) => existsSync(`${OUT}/raw/${n}.png`));
-    const items = made.length && mode === 'final' ? made.filter((f) => /iphone-6\.9|feature|icon/.test(f)).map((f) => ({ src: `/__out/${f}`, name: f })) : rawNames.map((n) => ({ src: `/__out/raw/${n}.png`, name: n }));
+    const items =
+      mode === 'final'
+        ? made.filter((f) => /iphone-6\.9|feature|icon|header|search/.test(f)).map((f) => ({ src: `/__out/${f}`, name: f }))
+        : [...rawNames.map((n) => ({ src: `/__out/raw/${n}.png`, name: n })), ...made.map((f) => ({ src: `/__out/${f}`, name: f }))];
     const sheet = `<!doctype html><html><head><meta charset="utf-8"><style>
 body { margin: 0; padding: 12px; background: #15161a; color: #ddd; font: 600 15px system-ui, sans-serif; width: 1976px; }
 .g { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
