@@ -1,7 +1,7 @@
 {
   "name": "huckline-app",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Native build shell for Huckline (compiled bundle in dist/).",
   "dependencies": {
     "@capacitor-community/in-app-review": "^8.0.0",
